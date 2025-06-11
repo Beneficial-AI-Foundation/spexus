@@ -6,11 +6,12 @@ members = [
     "backends/kani",
     "backends/refinedc",
     "lang",
-    "cli", "mcp",
+    "cli", 
+    "mcp",
 ]
 [workspace.package]
 name = "spexus"
 version = "0.0.1"
 authors = [ "Quinn Dougherty <quinn@beneficialaifoundation.org>" ]
-repository = "github.com/quinn-dougherty/gatekept-traffic-PoC"
+repository = "github.com/Beneficial-AI-Foundation/spexus"
 license = "MIT"

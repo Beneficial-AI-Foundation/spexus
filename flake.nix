@@ -28,6 +28,7 @@
         "x86_64-darwin"
       ];
       imports = [
+        ./nix/apps.nix
         ./nix/shells.nix
         nci.flakeModule
         ./nix/crates

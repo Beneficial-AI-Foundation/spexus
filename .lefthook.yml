@@ -2,3 +2,4 @@ pre-commit:
   parallel: true
   jobs:
     - run: nix flake check
+      glob: "*"
