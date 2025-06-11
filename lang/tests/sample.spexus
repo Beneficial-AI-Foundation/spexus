@@ -1,0 +1,33 @@
+// Basic arithmetic function
+spec divide {
+    prec: divisor != 0
+    post: result == dividend / divisor
+}
+
+// Array operations
+spec safe_get {
+    prec: index >= 0 && index < len(arr)
+    inv: len(arr) > 0
+    post: result == arr[index]
+}
+
+// Generic function with quantified metavariables
+forall T
+exists n: n >= 0
+spec process_array {
+    prec: len(input) == n
+    inv: n > 0
+    post: len(result) == n
+}
+
+// String operations
+spec substring {
+    prec: start >= 0 && end <= len(text) && start <= end
+    post: len(result) == end - start
+}
+
+// Simple list processing
+spec filter_positive {
+    prec: true
+    post: forall x in result: x > 0
+}

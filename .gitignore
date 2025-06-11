@@ -1,0 +1,5 @@
+.direnv/
+.lake/
+.DS_Store
+target/
+result

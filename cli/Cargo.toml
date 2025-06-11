@@ -1,0 +1,11 @@
+[package]
+name = "cli"
+edition = "2024"
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+kani = { path = "./../backends/kani" }
+refinedc = { path = "./../backends/refinedc" }

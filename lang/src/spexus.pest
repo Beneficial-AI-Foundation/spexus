@@ -1,0 +1,70 @@
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+COMMENT = _{ "//" ~ (!"\n" ~ ANY)* }
+
+spexus = { SOI ~ spec_entry* ~ EOI }
+
+spec_entry = { quantifier* ~ spec_core }
+
+quantifier = { forall_quant | exists_quant }
+
+forall_quant = { "forall" ~ identifier ~ (":" ~ term)? }
+exists_quant = { "exists" ~ identifier ~ (":" ~ term)? }
+
+spec_core = {
+    "spec" ~ identifier ~ "{" ~
+    (prec_decl | inv_decl | post_decl)* ~
+    "}"
+}
+
+prec_decl = { "prec" ~ ":" ~ term }
+inv_decl = { "inv" ~ ":" ~ term }
+post_decl = { "post" ~ ":" ~ term }
+
+term = { iff_expr }
+
+iff_expr = { implies_expr ~ ("<==> " ~ implies_expr)* }
+implies_expr = { or_expr ~ ("==>" ~ or_expr)* }
+or_expr = { and_expr ~ ("||" ~ and_expr)* }
+and_expr = { not_expr ~ ("&&" ~ not_expr)* }
+not_expr = { "!" ~ comparison_expr | comparison_expr }
+comparison_expr = { additive_expr ~ (comparison_op ~ additive_expr)* }
+additive_expr = { multiplicative_expr ~ (additive_op ~ multiplicative_expr)* }
+multiplicative_expr = { postfix_expr ~ (multiplicative_op ~ postfix_expr)* }
+
+postfix_expr = { base_expr ~ postfix_op* }
+base_expr = {
+    integer |
+    string |
+    boolean |
+    list |
+    function_call |
+    quantified_expr |
+    identifier |
+    paren_expr
+}
+
+postfix_op = { index_op | slice_op }
+index_op = { "[" ~ term ~ "]" }
+slice_op = { "[" ~ term ~ ".." ~ term ~ "]" }
+
+comparison_op = { "==" | "!=" | "<=" | ">=" | "<" | ">" }
+additive_op = { "+" | "-" }
+multiplicative_op = { "*" | "/" | "%" }
+
+integer = @{ "-"? ~ ASCII_DIGIT+ }
+string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+boolean = { "true" | "false" }
+identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+
+list = { "[" ~ (atom ~ ("," ~ atom)*)? ~ "]" }
+atom = { integer | string | boolean }
+
+function_call = { identifier ~ "(" ~ (term ~ ("," ~ term)*)? ~ ")" }
+
+quantified_expr = { (forall_expr | exists_expr) ~ ":" ~ term }
+forall_expr = { "forall" ~ identifier ~ "in" ~ (range_expr | term) }
+exists_expr = { "exists" ~ identifier ~ "in" ~ (range_expr | term) }
+
+range_expr = { term ~ ".." ~ term }
+
+paren_expr = { "(" ~ term ~ ")" }

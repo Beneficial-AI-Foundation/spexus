@@ -1,0 +1,16 @@
+[workspace]
+resolver = "3"
+
+members = [
+    "backends/common",
+    "backends/kani",
+    "backends/refinedc",
+    "lang",
+    "cli", "mcp",
+]
+[workspace.package]
+name = "spexus"
+version = "0.0.1"
+authors = [ "Quinn Dougherty <quinn@beneficialaifoundation.org>" ]
+repository = "github.com/quinn-dougherty/gatekept-traffic-PoC"
+license = "MIT"

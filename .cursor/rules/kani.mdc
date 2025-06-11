@@ -1,0 +1,78 @@
+---
+description: Information about Kani annotation syntax
+globs: 
+alwaysApply: false
+---
+Here's an example Kani proof harness. 
+
+```rust
+fn estiamte_size(x: u32) -> u32 {
+    assert!(x < 4096);
+    if x < 256 {
+        if x < 128 {
+            return 1;
+        } else {
+            return 3;
+        }
+    } else if x < 1024 {
+        if x > 1022 {
+            return 4;
+        } else {
+            return 5;
+        }
+    } else {
+        if x < 2048 {
+            return 7;
+        } else {
+            return 9;
+        }
+    }
+}
+
+#[cfg(kani)]
+mod verification { 
+    
+    #[kani::proof]
+    fn verify_success() {
+        let x: u32 = kani::any();
+        kani::assume(x < 4096);
+        let y = estimate_size(x);
+        assert!(y < 10);
+    }
+
+    #[cfg(kani)]
+    #[kani::proof]
+    fn will_fail() {
+        let x: u32 = kani::any();
+        let y = estimate_size(x);
+    }
+}
+```
+So to translate Spexus items into kani, you need to map `prec` to `kani::assume`, `post` to `assert!`, and call the name of the spec and store it in something like `result` unless a free variable in `post` seems like it's trying to be the result of calling the function.
+
+# Example translations
+
+You should translate the `spexus` item 
+```spexus
+spec divide {
+    prec: divisor != 0
+    post: result == dividend / divisor
+}
+```
+into the Kani proof harness
+```rust
+#[cfg(kani)]
+mod verification {
+  use super::*;
+  #[kani::proof]
+  fn verify_divide() { 
+    let divisor: usize = kani::any(); // a free variable in `divide` spec
+    let dividend: usize = kani::any(); // a free variable in `divide` spec
+    kani::assume(divisor != 0); // divide.pre
+    let result = divide(dividend, divisor); // call divide.name and store it in `result`
+    assert!(result == dividend / divisor); // divide.post
+  }
+}
+```
+
+View the Kani docs in [kani-docs.mdc](mdc:.cursor/rules/kani-docs.mdc)

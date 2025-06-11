@@ -1,0 +1,10 @@
+[package]
+name = "common"
+edition = "2024"
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+lang = { path = "./../../lang" }

@@ -1,0 +1,11 @@
+[package]
+edition = "2024"
+name = "mcp"
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+rmcp = "0.1.5"
+rmcp-macros = "0.1.5"

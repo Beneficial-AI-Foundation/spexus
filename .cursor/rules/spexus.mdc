@@ -1,0 +1,8 @@
+---
+description: Information about Spexus (the specification nexus), a specpilation IR with a concrete syntax
+globs: 
+alwaysApply: false
+---
+Spexus is the _specification nexus_. It's purpose is to provide a "universal speclang" that can be soundly compiled to the annotation syntax for various proof stacks like kani, refinedc, verus, dafny, etc. 
+
+To see Spexus's concrete syntax, please view [sample.spexus](mdc:spexus/rs/lang/tests/sample.spexus)
