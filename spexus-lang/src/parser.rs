@@ -15,7 +15,7 @@
 //!
 //! # Example
 //! ```
-//! use lang::parser::SpexusParser;
+//! use spexus_lang::parser::SpexusParser;
 //!
 //! let input = r#"
 //! spec divide {

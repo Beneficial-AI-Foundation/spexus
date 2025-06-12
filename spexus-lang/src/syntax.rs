@@ -17,7 +17,7 @@
 //!
 //! # Example
 //! ```
-//! use lang::syntax::{SpecCore, Term};
+//! use spexus_lang::syntax::{SpecCore, Term};
 //!
 //! let spec = SpecCore::new("divide")
 //!     .with_precondition(Term::Ne(

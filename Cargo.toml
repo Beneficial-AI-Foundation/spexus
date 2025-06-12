@@ -2,12 +2,12 @@
 resolver = "3"
 
 members = [
-    "backends/common",
-    "backends/kani",
-    "backends/refinedc",
-    "lang",
-    "cli", 
-    "mcp",
+    "backends/backends-common",
+    "backends/spexus-kani",
+    "backends/spexus-refinedc",
+    "spexus-lang",
+    "spexus-cli", 
+    "spexus-mcp",
 ]
 [workspace.package]
 name = "spexus"

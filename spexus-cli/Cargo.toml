@@ -1,5 +1,5 @@
 [package]
-name = "cli"
+name = "spexus-cli"
 edition = "2024"
 version.workspace = true
 authors.workspace = true
@@ -8,5 +8,5 @@ license.workspace = true
 
 [dependencies]
 clap = { version = "4.5.40", features = ["derive"] }
-kani = { path = "./../backends/kani" }
-refinedc = { path = "./../backends/refinedc" }
+spexus-kani = { path = "./../backends/spexus-kani" }
+spexus-refinedc = { path = "./../backends/spexus-refinedc" }

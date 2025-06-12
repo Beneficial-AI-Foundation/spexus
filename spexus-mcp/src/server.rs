@@ -58,7 +58,7 @@ impl RefinedCServer {
         #[tool(aggr)] TranslationRequest { spexus_string }: TranslationRequest,
     ) -> String {
         // TODO: Implement actual refinedc translation logic
-        format!("// Generated refinedc proof harness for: {}", spexus_string)
+        format!("// Generated refinedc annotations for: {}", spexus_string)
     }
 }
 

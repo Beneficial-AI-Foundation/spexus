@@ -98,6 +98,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ace50bade8e6234aa140d9a2f552bbee1db4d353f69b8217bc503490fc1a9f26"
 
 [[package]]
+name = "backends-common"
+version = "0.0.1"
+dependencies = [
+ "spexus-lang",
+]
+
+[[package]]
 name = "backtrace"
 version = "0.3.75"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -216,26 +223,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b94f61472cee1439c0b966b47e3aca9ae07e45d070759512cd390ea2bebc6675"
 
 [[package]]
-name = "cli"
-version = "0.0.1"
-dependencies = [
- "clap",
- "kani",
- "refinedc",
-]
-
-[[package]]
 name = "colorchoice"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b05b61dc5112cbb17e4b6cd61790d9845d13888356391624cbe7e41efeac1e75"
-
-[[package]]
-name = "common"
-version = "0.0.1"
-dependencies = [
- "lang",
-]
 
 [[package]]
 name = "core-foundation-sys"
@@ -436,23 +427,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "kani"
-version = "0.0.1"
-dependencies = [
- "common",
- "lang",
-]
-
-[[package]]
-name = "lang"
-version = "0.0.1"
-dependencies = [
- "pest",
- "pest_derive",
- "regex",
-]
-
-[[package]]
 name = "libc"
 version = "0.2.172"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -473,19 +447,6 @@ name = "log"
 version = "0.4.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "13dc2df351e3202783a1fe0d44375f7295ffb4049267b0f3018346dc122a1d94"
-
-[[package]]
-name = "mcp"
-version = "0.0.1"
-dependencies = [
- "clap",
- "kani",
- "lang",
- "rmcp",
- "rmcp-macros",
- "serde",
- "tokio",
-]
 
 [[package]]
 name = "memchr"
@@ -654,13 +615,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "928fca9cf2aa042393a8325b9ead81d2f0df4cb12e1e24cef072922ccd99c5af"
 dependencies = [
  "bitflags",
-]
-
-[[package]]
-name = "refinedc"
-version = "0.0.1"
-dependencies = [
- "common",
 ]
 
 [[package]]
@@ -864,6 +818,52 @@ checksum = "e22376abed350d73dd1cd119b57ffccad95b4e585a7cda43e286245ce23c0678"
 dependencies = [
  "libc",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "spexus-cli"
+version = "0.0.1"
+dependencies = [
+ "clap",
+ "spexus-kani",
+ "spexus-refinedc",
+]
+
+[[package]]
+name = "spexus-kani"
+version = "0.0.1"
+dependencies = [
+ "backends-common",
+ "spexus-lang",
+]
+
+[[package]]
+name = "spexus-lang"
+version = "0.0.1"
+dependencies = [
+ "pest",
+ "pest_derive",
+ "regex",
+]
+
+[[package]]
+name = "spexus-mcp"
+version = "0.0.1"
+dependencies = [
+ "clap",
+ "rmcp",
+ "rmcp-macros",
+ "serde",
+ "spexus-kani",
+ "spexus-lang",
+ "tokio",
+]
+
+[[package]]
+name = "spexus-refinedc"
+version = "0.0.1"
+dependencies = [
+ "backends-common",
 ]
 
 [[package]]

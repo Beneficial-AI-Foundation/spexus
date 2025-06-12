@@ -1,4 +1,4 @@
-use lang::syntax::{Atom, SpecCore, Term, Value, Variable};
+use spexus_lang::syntax::{Atom, SpecCore, Term, Value, Variable};
 
 fn add_module_header(code: &mut String) {
     code.push_str("#[cfg(kani)]\n");
@@ -107,20 +107,20 @@ fn add_module_footer(code: &mut String) {
 }
 
 /// Translates a Spexus value into Rust code
-fn translate_value(value: &lang::syntax::Value) -> String {
+fn translate_value(value: &Value) -> String {
     match value {
-        lang::syntax::Value::Atom(a) => match a {
-            lang::syntax::Atom::Integer(n) => n.to_string(),
-            lang::syntax::Atom::String(s) => format!("\"{}\"", s),
-            lang::syntax::Atom::Bool(b) => b.to_string(),
+        Value::Atom(a) => match a {
+            Atom::Integer(n) => n.to_string(),
+            Atom::String(s) => format!("\"{}\"", s),
+            Atom::Bool(b) => b.to_string(),
         },
-        lang::syntax::Value::List(l) => {
+        Value::List(l) => {
             let elements: Vec<String> = l
                 .iter()
                 .map(|a| match a {
-                    lang::syntax::Atom::Integer(n) => n.to_string(),
-                    lang::syntax::Atom::String(s) => format!("\"{}\"", s),
-                    lang::syntax::Atom::Bool(b) => b.to_string(),
+                    Atom::Integer(n) => n.to_string(),
+                    Atom::String(s) => format!("\"{}\"", s),
+                    Atom::Bool(b) => b.to_string(),
                 })
                 .collect();
             format!("vec![{}]", elements.join(", "))

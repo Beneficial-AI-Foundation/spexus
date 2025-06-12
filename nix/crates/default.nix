@@ -17,12 +17,12 @@
             depsDrvConfig.mkDerivation = { inherit buildInputs; };
           };
           crates = {
-            lang = { };
-            cli = { };
-            mcp = { };
-            backend-common = { };
-            backend-kani = { };
-            backend-refinedc = { };
+            spexus-lang = { };
+            spexus-cli = { };
+            spexus-mcp = { };
+            backends-common = { };
+            spexus-kani = { };
+            spexus-refinedc = { };
           };
         };
     };

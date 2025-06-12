@@ -3,8 +3,8 @@
     { config, ... }:
     {
       packages = {
-        default = config.packages.cli-release;
-        mcp = config.packages.mcp-release;
+        default = config.packages.spexus-cli-release;
+        mcp = config.packages.spexus-mcp-release;
       };
     };
 }

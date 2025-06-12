@@ -1,4 +1,5 @@
-use lang::parser::SpexusParser;
+use spexus_lang::parser::SpexusParser;
+use spexus_lang::syntax::Spexus;
 use std::fs::File;
 use std::io::{Error, Read};
 use std::path::Path;
@@ -16,12 +17,12 @@ impl From<Error> for SpexusError {
 }
 
 /// Parse a spexus string into a Spexus AST
-pub fn parse_spexus_string(content: &str) -> Result<lang::syntax::Spexus, SpexusError> {
+pub fn parse_spexus_string(content: &str) -> Result<Spexus, SpexusError> {
     SpexusParser::parse_spexus(content).map_err(|e| SpexusError::ParseError(e.to_string()))
 }
 
 /// Reads and parses a .spexus source file
-pub fn parse_spexus_file<P: AsRef<Path>>(path: P) -> Result<lang::syntax::Spexus, SpexusError> {
+pub fn parse_spexus_file<P: AsRef<Path>>(path: P) -> Result<Spexus, SpexusError> {
     let mut file = File::open(path)?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;

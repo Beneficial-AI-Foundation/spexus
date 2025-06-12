@@ -1,4 +1,5 @@
-use lang::parser::SpexusParser;
+use spexus_lang::parser::SpexusParser;
+use spexus_lang::syntax;
 use std::fs;
 use std::path::Path;
 
@@ -61,7 +62,7 @@ fn test_parse_sample_spexus_file() {
 
     // Verify quantifiers
     match &process_array_spec.quantifiers[0] {
-        lang::syntax::Quantifier::Forall { var, domain } => {
+        syntax::Quantifier::Forall { var, domain } => {
             assert_eq!(var.name, "T");
             assert!(domain.is_none(), "T should be unconstrained");
         }
@@ -69,7 +70,7 @@ fn test_parse_sample_spexus_file() {
     }
 
     match &process_array_spec.quantifiers[1] {
-        lang::syntax::Quantifier::Exists { var, domain } => {
+        syntax::Quantifier::Exists { var, domain } => {
             assert_eq!(var.name, "n");
             assert!(domain.is_some(), "n should have domain constraint");
         }
@@ -104,14 +105,14 @@ fn test_parse_individual_specs() {
     // Test that we can access the precondition and postcondition
     // (We won't test the exact AST structure here, just that parsing succeeded)
     match &divide_spec.core.precondition {
-        lang::syntax::Term::Ne(_, _) => {
+        syntax::Term::Ne(_, _) => {
             // Good, precondition is a not-equal comparison
         }
         _ => panic!("divide precondition should be a != comparison"),
     }
 
     match &divide_spec.core.postcondition {
-        lang::syntax::Term::Eq(_, _) => {
+        syntax::Term::Eq(_, _) => {
             // Good, postcondition is an equality
         }
         _ => panic!("divide postcondition should be an == comparison"),
