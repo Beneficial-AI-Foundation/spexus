@@ -7,5 +7,10 @@ repository.workspace = true
 license.workspace = true
 
 [dependencies]
-rmcp = "0.1.5"
+rmcp = { version = "0.1.5", features = ["transport-io"] }
 rmcp-macros = "0.1.5"
+serde = "1.0.219"
+tokio = { version = "1.45.1", features = ["full"] }
+lang = { path = "./../lang" }
+kani = { path = "./../backends/kani"}
+clap = { version = "4.5.40", features = ["derive"] }
