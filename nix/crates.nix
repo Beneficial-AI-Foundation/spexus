@@ -8,7 +8,7 @@
     {
       nci =
         let
-          buildInputs = import "${inputs.self}/nix/buildInputs.nix" { inherit pkgs; };
+          buildInputs = import ./buildInputs.nix { inherit pkgs; };
         in
         {
           projects.spexus = {

@@ -1,9 +1,10 @@
 use rmcp::{
-    RoleServer, ServerHandler, ServiceExt,
+    ServerHandler, ServiceExt,
     model::{ServerCapabilities, ServerInfo},
     schemars, tool,
 };
-use std::error::Error;
+use spexus_kani::translate::translate_to_kani;
+use spexus_lang::parser::SpexusParser;
 
 #[derive(Debug, rmcp::serde::Deserialize, schemars::JsonSchema)]
 pub struct TranslationRequest {
@@ -12,62 +13,70 @@ pub struct TranslationRequest {
 }
 
 #[derive(Debug, Clone)]
-pub struct KaniServer;
+pub struct SpexusServer;
 
 #[tool(tool_box)]
-impl KaniServer {
+impl SpexusServer {
     pub fn new() -> Self {
         Self
     }
 
-    #[tool(description = "Translate a spexus string into a kani proof harness")]
-    fn translate(
+    #[tool(
+        name = "translate_to_kani",
+        description = "Translate a spexus string into a kani proof harness"
+    )]
+    fn translate_to_kani(
         &self,
         #[tool(aggr)] TranslationRequest { spexus_string }: TranslationRequest,
     ) -> String {
-        // TODO: Implement actual kani translation logic
-        format!("// Generated kani proof harness for: {}", spexus_string)
-    }
-}
+        // Parse the spexus string into a Spexus AST
+        let spexus =
+            SpexusParser::parse_spexus(&spexus_string).expect("Failed to parse spexus string");
 
-#[tool(tool_box)]
-impl ServerHandler for KaniServer {
-    fn get_info(&self) -> ServerInfo {
-        ServerInfo {
-            instructions: Some(
-                "A server that translates spexus strings into kani proof harnesses".into(),
-            ),
-            capabilities: ServerCapabilities::builder().enable_tools().build(),
-            ..Default::default()
-        }
-    }
-}
+        // Get the first spec entry and translate it
+        let spec = spexus
+            .entries
+            .first()
+            .expect("No spec entries found")
+            .core();
 
-#[derive(Debug, Clone)]
-pub struct RefinedCServer;
-
-#[tool(tool_box)]
-impl RefinedCServer {
-    pub fn new() -> Self {
-        Self
+        // Translate the spec into a kani proof harness
+        translate_to_kani(spec)
     }
 
-    #[tool(description = "Translate a spexus string into a refinedc proof harness")]
-    fn translate(
+    #[tool(
+        name = "translate_to_refinedc",
+        description = "Translate a spexus string into a refinedc proof harness"
+    )]
+    fn translate_to_refinedc(
         &self,
         #[tool(aggr)] TranslationRequest { spexus_string }: TranslationRequest,
     ) -> String {
         // TODO: Implement actual refinedc translation logic
         format!("// Generated refinedc annotations for: {}", spexus_string)
     }
+
+    #[tool(
+        name = "validate",
+        description = "Validate a spexus string and return empty string if valid, error message if invalid"
+    )]
+    fn validate(
+        &self,
+        #[tool(aggr)] TranslationRequest { spexus_string }: TranslationRequest,
+    ) -> String {
+        match SpexusParser::parse_spexus(&spexus_string) {
+            Ok(_) => String::new(),
+            Err(e) => e.to_string(),
+        }
+    }
 }
 
 #[tool(tool_box)]
-impl ServerHandler for RefinedCServer {
+impl ServerHandler for SpexusServer {
     fn get_info(&self) -> ServerInfo {
         ServerInfo {
             instructions: Some(
-                "A server that translates spexus strings into refinedc proof harnesses".into(),
+                "A server that provides tools for working with spexus strings, including translation to kani/refinedc and validation".into(),
             ),
             capabilities: ServerCapabilities::builder().enable_tools().build(),
             ..Default::default()
@@ -75,35 +84,17 @@ impl ServerHandler for RefinedCServer {
     }
 }
 
-pub enum Server {
-    Kani(KaniServer),
-    RefinedC(RefinedCServer),
-}
-
-impl Server {
-    pub async fn serve(
+impl SpexusServer {
+    pub async fn run_server(
         self,
         transport: (tokio::io::Stdin, tokio::io::Stdout),
     ) -> Result<(), std::io::Error> {
-        match self {
-            Server::Kani(server) => {
-                let service = server.serve(transport).await?;
-                service.waiting().await?;
-                Ok(())
-            }
-            Server::RefinedC(server) => {
-                let service = server.serve(transport).await?;
-                service.waiting().await?;
-                Ok(())
-            }
-        }
+        let service = self.serve(transport).await?;
+        service.waiting().await?;
+        Ok(())
     }
 }
 
-pub fn create_server(backend_name: &str) -> Result<Server, Box<dyn Error>> {
-    match backend_name {
-        "kani" => Ok(Server::Kani(KaniServer::new())),
-        "refinedc" => Ok(Server::RefinedC(RefinedCServer::new())),
-        _ => Err(format!("Unknown backend: {}", backend_name).into()),
-    }
+pub fn create_server() -> SpexusServer {
+    SpexusServer::new()
 }

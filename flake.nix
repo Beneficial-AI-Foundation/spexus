@@ -31,7 +31,7 @@
         ./nix/apps.nix
         ./nix/shells.nix
         nci.flakeModule
-        ./nix/crates
+        ./nix/crates.nix
         fmt.flakeModule
         ./nix/format.nix
       ];
