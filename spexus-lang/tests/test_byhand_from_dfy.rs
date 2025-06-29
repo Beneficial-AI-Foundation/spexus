@@ -59,3 +59,23 @@ fn test_quantified_expressions() {
     // Now that multiple post declarations are properly combined, we can verify this works
     println!("✅ Successfully parsed quantified expressions in postconditions");
 }
+
+#[test]
+fn test_np_less_equal_parses() {
+    let test_file_path = Path::new("tests/byhand_from_dfy.spexus");
+    let content = fs::read_to_string(test_file_path).expect("Failed to read test file");
+
+    let spexus =
+        SpexusParser::parse_spexus(&content).expect("Failed to parse byhand_from_dfy.spexus file");
+
+    // Test that np_less_equal spec parses correctly
+    let np_less_equal_spec = spexus.find_entry("np_less_equal").unwrap();
+    assert_eq!(np_less_equal_spec.symbol(), "np_less_equal");
+    assert_eq!(
+        np_less_equal_spec.quantifiers.len(),
+        0,
+        "np_less_equal should have no quantifiers"
+    );
+
+    println!("✅ Successfully parsed np_less_equal spec");
+}

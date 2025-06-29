@@ -4,3 +4,10 @@ spec np_cum_sum {
     post: len(output) > 0 ==> output[0] == input[0]
     post: forall i in 1..len(input): output[i] == output[i-1] + input[i]
 }
+
+// https://github.com/Beneficial-AI-Foundation/vericoding/blob/main/dafny/benchmarks/numpy_specs/np_less_equal.dfy
+spec np_less_equal { 
+    prec: len(a) == len(b) 
+    post: len(output) == len(a)
+    post: forall i in 0..len(a): output[i] == (a[i] <= b[i])
+}
