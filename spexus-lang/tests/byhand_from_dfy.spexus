@@ -1,0 +1,6 @@
+// https://github.com/Beneficial-AI-Foundation/vericoding/blob/main/dafny/benchmarks/numpy_specs/np_cum_sum.dfy 
+spec np_cum_sum { 
+    post: len(output) == len(input) 
+    post: len(output) > 0 ==> output[0] == input[0]
+    post: forall i in 1..len(input): output[i] == output[i-1] + input[i]
+}

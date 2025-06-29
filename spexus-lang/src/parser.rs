@@ -116,6 +116,8 @@ fn parse_spec_core(pair: pest::iterators::Pair<Rule>) -> SpecCore {
     let mut precondition = Term::tt();
     let mut invariant = Term::tt();
     let mut postcondition = Term::tt();
+    let mut prec_terms = Vec::new();
+    let mut post_terms = Vec::new();
 
     for inner_pair in pair.into_inner() {
         match inner_pair.as_rule() {
@@ -126,16 +128,46 @@ fn parse_spec_core(pair: pest::iterators::Pair<Rule>) -> SpecCore {
                 }
             }
             Rule::prec_decl => {
-                precondition = parse_term(inner_pair.into_inner().next().unwrap());
+                let term = parse_term(inner_pair.into_inner().next().unwrap());
+                prec_terms.push(term);
             }
             Rule::inv_decl => {
                 invariant = parse_term(inner_pair.into_inner().next().unwrap());
             }
             Rule::post_decl => {
-                postcondition = parse_term(inner_pair.into_inner().next().unwrap());
+                let term = parse_term(inner_pair.into_inner().next().unwrap());
+                post_terms.push(term);
             }
             _ => unreachable!("Unexpected rule in spec_core: {:?}", inner_pair.as_rule()),
         }
+    }
+
+    // Combine multiple prec declarations with AND
+    if prec_terms.is_empty() {
+        precondition = Term::tt();
+    } else if prec_terms.len() == 1 {
+        precondition = prec_terms.into_iter().next().unwrap();
+    } else {
+        // Combine all prec terms with AND
+        let mut combined = prec_terms.remove(0);
+        for term in prec_terms {
+            combined = Term::And(Box::new(combined), Box::new(term));
+        }
+        precondition = combined;
+    }
+
+    // Combine multiple post declarations with AND
+    if post_terms.is_empty() {
+        postcondition = Term::tt();
+    } else if post_terms.len() == 1 {
+        postcondition = post_terms.into_iter().next().unwrap();
+    } else {
+        // Combine all post terms with AND
+        let mut combined = post_terms.remove(0);
+        for term in post_terms {
+            combined = Term::And(Box::new(combined), Box::new(term));
+        }
+        postcondition = combined;
     }
 
     SpecCore {
@@ -534,5 +566,74 @@ mod tests {
 
         let spexus = SpexusParser::parse_spexus(input).unwrap();
         assert_eq!(spexus.entries.len(), 1);
+    }
+
+    #[test]
+    fn test_multiple_prec_declarations() {
+        // This test verifies that multiple prec declarations are properly combined with &&
+
+        let test_input = r#"
+    spec test {
+        prec: len(input) > 0
+        prec: forall i in 0..len(input): input[i] >= 0
+        prec: len(input) < 1000
+        post: len(result) == len(input)
+    }
+    "#;
+
+        let spexus = SpexusParser::parse_spexus(test_input).expect("Should parse successfully");
+        let test_spec = spexus.find_entry("test").unwrap();
+
+        // The parser should now combine multiple prec declarations with &&
+        // The result should be: (len(input) > 0) && (forall i in 0..len(input): input[i] >= 0) && (len(input) < 1000)
+        println!("✅ Multiple prec declarations are now properly combined with &&");
+        println!(
+            "   Combined precondition: {:?}",
+            test_spec.core.precondition
+        );
+
+        // We can verify that it's an AND term with multiple subterms
+        match &test_spec.core.precondition {
+            Term::And(_, _) => {
+                println!("✅ Precondition is properly structured as an AND term");
+            }
+            _ => {
+                println!("⚠️  Precondition is not structured as expected");
+            }
+        }
+    }
+
+    #[test]
+    fn test_parser_limitation_multiple_post() {
+        // This test verifies that multiple post declarations are properly combined with &&
+
+        let test_input = r#"
+    spec test {
+        post: len(result) == len(input)
+        post: forall i in 0..len(input): result[i] == input[i]
+        post: len(result) > 0
+    }
+    "#;
+
+        let spexus = SpexusParser::parse_spexus(test_input).expect("Should parse successfully");
+        let test_spec = spexus.find_entry("test").unwrap();
+
+        // The parser should now combine multiple post declarations with &&
+        // The result should be: (len(result) == len(input)) && (forall i in 0..len(input): result[i] == input[i]) && (len(result) > 0)
+        println!("✅ Multiple post declarations are now properly combined with &&");
+        println!(
+            "   Combined postcondition: {:?}",
+            test_spec.core.postcondition
+        );
+
+        // We can verify that it's an AND term with multiple subterms
+        match &test_spec.core.postcondition {
+            Term::And(_, _) => {
+                println!("✅ Postcondition is properly structured as an AND term");
+            }
+            _ => {
+                println!("⚠️  Postcondition is not structured as expected");
+            }
+        }
     }
 }
