@@ -1,4 +1,10 @@
-{ pkgs }:
+{ nixpkgs, system }:
+let
+  pkgs = import nixpkgs {
+    config.allowUnfree = true;
+    inherit system;
+  };
+in
 with pkgs;
 [
   elan
@@ -6,4 +12,5 @@ with pkgs;
   pnpm
   typescript
   lefthook
+  claude-code
 ]

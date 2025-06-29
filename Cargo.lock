@@ -830,6 +830,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "spexus-dafny"
+version = "0.0.1"
+dependencies = [
+ "backends-common",
+ "pest",
+ "pest_derive",
+ "spexus-lang",
+]
+
+[[package]]
 name = "spexus-kani"
 version = "0.0.1"
 dependencies = [

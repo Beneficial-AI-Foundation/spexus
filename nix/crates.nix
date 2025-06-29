@@ -1,14 +1,14 @@
 { inputs, ... }:
 {
   perSystem =
-    {
-      pkgs,
-      ...
-    }:
+    { system, ... }:
     {
       nci =
         let
-          buildInputs = import ./buildInputs.nix { inherit pkgs; };
+          buildInputs = import ./buildInputs.nix {
+            inherit (inputs) nixpkgs;
+            inherit system;
+          };
         in
         {
           projects.spexus = {

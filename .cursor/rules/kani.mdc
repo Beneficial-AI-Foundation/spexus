@@ -1,12 +1,12 @@
 ---
-description: Information about Kani annotation syntax
-globs: 
+description: 
+globs: backends/spexus-kani/**/*.rs
 alwaysApply: false
 ---
 Here's an example Kani proof harness. 
 
 ```rust
-fn estiamte_size(x: u32) -> u32 {
+fn estimate_size(x: u32) -> u32 {
     assert!(x < 4096);
     if x < 256 {
         if x < 128 {

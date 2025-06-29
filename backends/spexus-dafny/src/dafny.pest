@@ -1,0 +1,85 @@
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+COMMENT = _{ "//" ~ (!"\n" ~ ANY)* }
+
+dafny = { SOI ~ method_spec* ~ EOI }
+
+method_spec = {
+    method_header ~
+    (requires_clause | ensures_clause | decreases_clause | reads_clause | modifies_clause)* ~
+    method_body?
+}
+
+method_header = {
+    "method" ~
+    (method_attributes ~ "method")? ~
+    identifier ~
+    "(" ~ parameter_list? ~ ")" ~
+    ("returns" ~ "(" ~ parameter_list? ~ ")")?
+}
+
+method_attributes = { "{" ~ attribute ~ ("," ~ attribute)* ~ "}" }
+attribute = { identifier ~ (":" ~ attribute_value)? }
+attribute_value = { identifier | string }
+
+requires_clause = { "requires" ~ (identifier ~ ":")? ~ expression }
+ensures_clause = { "ensures" ~ (identifier ~ ":")? ~ expression }
+decreases_clause = { "decreases" ~ (expression ~ ("," ~ expression)* | "*") }
+reads_clause = { "reads" ~ frame_expression }
+modifies_clause = { "modifies" ~ frame_expression }
+
+frame_expression = { "*" | "{" ~ (expression ~ ("," ~ expression)*)? ~ "}" | expression }
+
+parameter_list = { parameter ~ ("," ~ parameter)* }
+parameter = { identifier ~ ":" ~ type_annotation }
+
+type_annotation = { 
+    "int" | "bool" | "string" | "array" ~ "<" ~ type_annotation ~ ">" |
+    identifier ~ ("?" ~ "?")? |
+    "seq" ~ "<" ~ type_annotation ~ ">"
+}
+
+method_body = { "{" ~ statement* ~ "}" }
+statement = { "..." | "//" ~ (!"\n" ~ ANY)* }
+
+expression = { implies_expr }
+
+implies_expr = { or_expr ~ ("==>" ~ or_expr)* }
+or_expr = { and_expr ~ ("||" ~ and_expr)* }
+and_expr = { not_expr ~ ("&&" ~ not_expr)* }
+not_expr = { "!" ~ comparison_expr | comparison_expr }
+comparison_expr = { additive_expr ~ (comparison_op ~ additive_expr)* }
+additive_expr = { multiplicative_expr ~ (additive_op ~ multiplicative_expr)* }
+multiplicative_expr = { postfix_expr ~ (multiplicative_op ~ postfix_expr)* }
+
+postfix_expr = { base_expr ~ postfix_op* }
+base_expr = {
+    integer |
+    string |
+    boolean |
+    identifier |
+    function_call |
+    quantified_expr |
+    paren_expr
+}
+
+postfix_op = { index_op | slice_op | field_access }
+index_op = { "[" ~ expression ~ "]" }
+slice_op = { "[" ~ expression ~ ".." ~ expression ~ "]" }
+field_access = { "." ~ identifier }
+
+comparison_op = { "==" | "!=" | "<=" | ">=" | "<" | ">" }
+additive_op = { "+" | "-" }
+multiplicative_op = { "*" | "/" | "%" }
+
+integer = @{ "-"? ~ ASCII_DIGIT+ }
+string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+boolean = { "true" | "false" }
+identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+
+function_call = { identifier ~ "(" ~ (expression ~ ("," ~ expression)*)? ~ ")" }
+
+quantified_expr = { (forall_expr | exists_expr) ~ "::" ~ expression }
+forall_expr = { "forall" ~ identifier ~ (":" ~ type_annotation)? ~ ("," ~ identifier ~ (":" ~ type_annotation)?)* }
+exists_expr = { "exists" ~ identifier ~ (":" ~ type_annotation)? ~ ("," ~ identifier ~ (":" ~ type_annotation)?)* }
+
+paren_expr = { "(" ~ expression ~ ")" } 

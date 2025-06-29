@@ -1,0 +1,13 @@
+[package]
+edition = "2024"
+name = "spexus-dafny"
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+backends-common = { path = "./../backends-common" }
+spexus-lang = { path = "./../../spexus-lang" }
+pest = "2.7"
+pest_derive = "2.7"
