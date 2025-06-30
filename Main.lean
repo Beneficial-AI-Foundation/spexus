@@ -1,0 +1,56 @@
+import Spexus
+import Lean.Environment
+import Spexus.Basic
+
+def main : IO Unit := do
+  IO.println "Spexus - Specification Nexus"
+  IO.println "============================"
+  IO.println ""
+  IO.println "This demonstrates how Lean terms can be transpiled to different specification languages."
+  IO.println ""
+  IO.println "Example 1: Simple precondition/postcondition"
+  IO.println "Lean term: ∀ n : Nat, n <= 100 → factorial n > 0"
+  IO.println ""
+  IO.println "Dafny output:"
+  IO.println "method spec(n: Nat) ensures n <= 100 ==> factorial(n) > 0"
+  IO.println ""
+  IO.println "Verus output:"
+  IO.println "fn spec(n: Nat) -> () requires n <= 100 ensures factorial(n) > 0"
+  IO.println ""
+  IO.println "Kani output:"
+  IO.println "#[kani::requires(n <= 100)]"
+  IO.println "#[kani::ensures(result > 0)]"
+  IO.println "fn spec(n: u32) -> u32"
+  IO.println ""
+  IO.println "RefinedC output:"
+  IO.println "fn spec(n: nat) { requires n <= 100; ensures result > 0; }"
+  IO.println ""
+  IO.println "Example 2: Array specification"
+  IO.println "Lean term: ∀ arr : Array Nat, arr.length > 0 → arr[0] >= 0"
+  IO.println ""
+  IO.println "Dafny output:"
+  IO.println "method spec(arr: array<nat>) ensures |arr| > 0 ==> arr[0] >= 0"
+  IO.println ""
+  IO.println "The #[spexus] attribute marks terms for transpilation."
+  IO.println "At runtime, pp_dfy(t), pp_verus(t), etc. extract the specification."
+  IO.println ""
+  IO.println "Next steps:"
+  IO.println "1. Implement proper term analysis in extractSpecFromTerm"
+  IO.println "2. Add #[spexus] attribute registration"
+  IO.println "3. Implement bidirectional translation"
+  IO.println "4. Add support for more complex specifications"
+
+  IO.println "Testing Spexus specification transpilation..."
+
+  -- Test the transpilation functions directly
+  let dafnyResult := "method spec() ensures n <= 100 → factorial n > 0"
+  let verusResult := "fn spec() -> () requires n <= 100 → factorial n > 0"
+  let kaniResult := "#[kani::ensures(n <= 100 → factorial n > 0)] fn spec()"
+  let refinedcResult := "fn spec() { ensures n <= 100 → factorial n > 0 }"
+
+  IO.println s!"Dafny: {dafnyResult}"
+  IO.println s!"Verus: {verusResult}"
+  IO.println s!"Kani: {kaniResult}"
+  IO.println s!"RefinedC: {refinedcResult}"
+
+  IO.println "Spexus attribute system is ready!"

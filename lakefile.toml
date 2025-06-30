@@ -1,0 +1,14 @@
+name = "spexus"
+version = "0.1.0"
+defaultTargets = ["spexus"]
+
+[[lean_lib]]
+name = "Spexus"
+
+[[lean_exe]]
+name = "test"
+root = "Test"
+
+[[lean_exe]]
+name = "spexus"
+root = "Main"
