@@ -1,6 +1,9 @@
 import Spexus
 import Lean.Environment
+import Lean.Meta
 import Spexus.Basic
+
+open Lean Meta
 
 def main : IO Unit := do
   IO.println "Spexus - Specification Nexus"
@@ -42,11 +45,13 @@ def main : IO Unit := do
 
   IO.println "Testing Spexus specification transpilation..."
 
-  -- Test the transpilation functions directly
-  let dafnyResult := "method spec() ensures n <= 100 → factorial n > 0"
-  let verusResult := "fn spec() -> () requires n <= 100 → factorial n > 0"
-  let kaniResult := "#[kani::ensures(n <= 100 → factorial n > 0)] fn spec()"
-  let refinedcResult := "fn spec() { ensures n <= 100 → factorial n > 0 }"
+  -- Test the transpilation functions with dummy expressions  
+  let dummyExpr : Lean.Expr := Lean.Expr.const `factorial_spec []
+
+  let dafnyResult ← pp_dfy dummyExpr
+  let verusResult ← pp_verus dummyExpr  
+  let kaniResult ← pp_kani dummyExpr
+  let refinedcResult ← pp_refinedc dummyExpr
 
   IO.println s!"Dafny: {dafnyResult}"
   IO.println s!"Verus: {verusResult}"

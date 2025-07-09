@@ -19,15 +19,47 @@ The current implementation provides:
 - **Example specifications** demonstrating the concept
 - **Modular architecture** ready for expansion
 
-## Usage
+## Usage (aspirational)
 
+If we take the following spec with the `spexus` attribute: 
 ```lean
--- Mark a term as a specification (future: #[spexus] attribute)
-def factorial_spec (n : Nat) : Prop := 
-  n <= 100 → factorial n > 0
+@[spexus]
+def factorial_spec (factorial: Nat → Nat) : Prop :=
+  forall n, factorial n = factorial_rec n
+  where factorial_rec (n : Nat) : Nat :=
+    match n with
+    | 0 => 1
+    | n + 1 => (n + 1) * factorial_rec n
+```
+We would like to be able to **transpile** to dafny, verus, etc. 
 
--- Transpile to different languages
+``` lean
 #eval pp_dfy factorial_spec
+```
+Should result in 
+```dafny
+module FactorialSpec {
+
+  // The “reference” factorial, defined by recursion
+  function factorial_rec(n: nat): nat
+    decreases n
+  {
+    if n == 0 then
+      1
+    else
+      n * factorial_rec(n - 1)
+  }
+
+  // A predicate saying that any implementation `f` equals the reference
+  predicate factorial_spec(f: nat -> nat)
+  {
+    forall n: nat :: f(n) == factorial_rec(n)
+  }
+
+}
+```
+
+``` lean
 #eval pp_verus factorial_spec
 #eval pp_kani factorial_spec
 #eval pp_refinedc factorial_spec
